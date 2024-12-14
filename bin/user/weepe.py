@@ -54,8 +54,13 @@ try:
                 self._dest = conf.get("dest", "APRS")
                 self._host = conf.get("host", "localhost")
                 self._port = int(conf.get("port", 8000))
+                self._interval = int(conf.get("interval", 0))
 
                 log.info("Starting")
+
+                # Set to the interval value to emit a packet on the first
+                # archive packet after start up.
+                self._interval_count = self._interval
 
                 self._pktEngine = pe.app.Application()
 
@@ -119,22 +124,26 @@ try:
             while True:
                 pkt = self._pkt_queue.get()
                 log.debug("packet: '" + pkt + "'")
-                
-                try:
-                    if self._check_pe_engine() is True:
-                        self._pktEngine.send_unproto(port=0,
-                                                    call_from=self._callsign,
-                                                    call_to=self._dest,
-                                                    data=pkt,
-                                                    via=self._via)
-                    else:
-                        log.warning("Not connected to server")
-                except pe.app.NotConnectedError:
-                    log.error("Connection to server lost")
-                except ValueError:
-                    log.error("Bad packet")
 
-                self._pkt_queue.task_done()
+                self._interval_count += 1
+                if self._interval_count > self._interval:
+                
+                    try:
+                        if self._check_pe_engine() is True:
+                            self._pktEngine.send_unproto(port=0,
+                                                        call_from=self._callsign,
+                                                        call_to=self._dest,
+                                                        data=pkt,
+                                                        via=self._via)
+                        else:
+                            log.warning("Not connected to server")
+                    except pe.app.NotConnectedError:
+                        log.error("Connection to server lost")
+                    except ValueError:
+                        log.error("Bad packet")
+
+                    self._pkt_queue.task_done()
+                    self._interval_count = 0
                     
 except FileNotFoundError:
     class AgwpeWx():
