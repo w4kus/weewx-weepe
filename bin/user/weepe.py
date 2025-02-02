@@ -24,12 +24,12 @@ import pe
 import socket
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
-log_stream_debug = logging.StreamHandler()
-log_stream_debug.setLevel(logging.DEBUG)
-log_stream_debug.setFormatter(logging.Formatter("%(message)s"))
-log.addHandler(log_stream_debug)
+# log_stream_debug = logging.StreamHandler()
+# log_stream_debug.setLevel(logging.DEBUG)
+# log_stream_debug.setFormatter(logging.Formatter("%(message)s"))
+# log.addHandler(log_stream_debug)
 
 try:
     # import aprs module - it's expected that all extensions reside in the
@@ -39,7 +39,7 @@ try:
     aprs = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(aprs)
 
-    class AgwpeWx(aprs.APRS, weewx.engine.StdService):
+    class AGWPEWx(aprs.APRS, weewx.engine.StdService):
 
         def __init__(self, engine, config_dict):
             super().__init__(engine, config_dict)
@@ -49,12 +49,19 @@ try:
             except KeyError:
                 log.error("Configuration not found..aborting")
             else:
-                self._callsign = conf.get("callsign", "NOCALL")
+                self._callsign = str.upper(conf.get("callsign", "NOCALL"))
                 self._via = conf.get("via", "WIDE2-1").split(',')
-                self._dest = conf.get("dest", "APRS")
+                self._dest = str.upper(conf.get("dest", "APRS"))
                 self._host = conf.get("host", "localhost")
                 self._port = int(conf.get("port", 8000))
                 self._interval = int(conf.get("interval", 0))
+
+                for s in self._via:
+                    s = str.upper(s)
+
+                if self._callsign == "NOCALL":
+                    log.info("Test mode")
+                    return
 
                 log.info("Starting")
 
@@ -77,17 +84,18 @@ try:
         def _handle_new_archive_record(self, event):
             super()._handle_new_archive_record(event)
 
-            # Read the packet in and queue it up
-            # The super doesn't handle file execptions so if saving it didn't work
-            # we'll probably crash, but handle exceptions here anyway.
-            try:
-                f = open(self._output_filename)
-            except IOError:
-                log.error("File error")
-            else:
-                pkt = f.read()
-                self._pkt_queue.put(pkt)
-                f.close()
+            if self._callsign != "NOCALL":
+                # Read the packet in and queue it up
+                # The super doesn't handle file execptions so if saving it didn't work
+                # we'll probably crash, but handle exceptions here anyway.
+                try:
+                    f = open(self._output_filename)
+                except IOError:
+                    log.error("File error")
+                else:
+                    pkt = f.read()
+                    self._pkt_queue.put(pkt)
+                    f.close()
         
         # AGWPE thread context (also called once from the constructor before the thread is instantiated)
         def _check_pe_engine(self):
