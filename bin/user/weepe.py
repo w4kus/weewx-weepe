@@ -54,7 +54,7 @@ try:
                 self._dest = str.upper(conf.get("dest", "APRS"))
                 self._host = conf.get("host", "localhost")
                 self._port = int(conf.get("port", 8000))
-                self._interval = int(conf.get("interval", 0))
+                self._interval = int(conf.get("interval", 2))
 
                 for s in self._via:
                     s = str.upper(s)
@@ -86,7 +86,7 @@ try:
 
             if self._callsign != "NOCALL":
                 # Read the packet in and queue it up
-                # The super doesn't handle file execptions so if saving it didn't work
+                # The super doesn't handle file exceptions so if saving it didn't work
                 # we'll probably crash, but handle exceptions here anyway.
                 try:
                     f = open(self._output_filename)

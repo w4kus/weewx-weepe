@@ -13,14 +13,14 @@ The following configuration items are located in the section in *weewx.conf* lab
 - **callsign** - the callsign to use. This will be both the source address of the generated packet and the AGWPE login. *Default: "NOCALL"*
 - **via** - the path to insert into the packet. *Default: "WIDE2-1"*
 - **dest** - the destination of the packet. *Default: "APRS"* (see below for more information)
-- **interval** - the number of archive reports to skip before generating a packet. *Default: 0*
+- **interval** - the number of archive reports to skip before generating a packet. *Default: 2*
 
 See also the configuration for the **aprs** extension which will allow you to set your station's symbol and comment fields as well as whether or not to generate position or positionless weather packets.
 
 ### Packet Generation
 **weepe** uses the **weewx**'s archive generation rate as the "clock" to drive the generation of packets. By default, **weewx** uses a 5 minute interval for generating archive records. Therefore, the *interval* configuration item controls how often **weepe** will generate packets. If you are sending your packets to a AGWPE server which transmits the packets over the air, take care in choosing the value of *interval* so as not to generate too much traffic, especially if a wide area digipeater is in range.
 
-For example, generating a packet every 30 minutes is nice rate. Assuming **weewx** is set to generate archive records every 5 minutes, then to generate your weather packets every 30 minutes, set *inteval* to 6. Note that **weepe** will always send a packet when the first archive record is received after startup.
+For example, to generate a weather packet every 15 minutes and assuming **weewx** is set to generate archive records every 5 minutes, set *interval* to 2.  That is, skip two archive events (10 minutes total) and then generate the packet (15th minute). Note that setting it to zero will cause **weewx** to generate a packet on every archive event.
 
 ### Configuration Notes
 The **dest** item is typically set to one of the character sequence codes as defined [here](http://aprs.org/aprs11/tocalls.txt). These usually describe the hardware and / or software you are using. For example, I currently use [Direwolf](https://github.com/wb2osz/direwolf) version 1.7 for my IGATE software, so my **dest** is set to "APDW17". It is highly recommended to change the **dest** field from the default.

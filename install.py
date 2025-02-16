@@ -21,7 +21,7 @@ class WeepeInstaller(ExtensionInstaller):
                     'callsign': 'NOCALL',
                     'via': 'WIDE2-1',
                     'dest': 'APRS',
-                    'interval': 0
+                    'interval': 2
                 },
             },
             files=[('bin/user', ['bin/user/weepe.py'])]
