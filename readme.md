@@ -1,9 +1,9 @@
 ## WEEWX AGWPE Packet Engine - *weepe*
 
-This is a [weewx](https://weewx.com/) extension allows you to forward your weather data to an [AGWPE](https://www.on7lds.net/42/sites/default/files/AGWPEAPI.HTM) server for transmission over [APRS](http://www.aprs.org/).  For more information, see the [Wikipedia](https://en.wikipedia.org/wiki/Automatic_Packet_Reporting_System) article.
+This is [weewx](https://weewx.com/) extension allows you to forward your weather data to an [AGWPE](https://www.on7lds.net/42/sites/default/files/AGWPEAPI.HTM) server for transmission over [APRS](http://www.aprs.org/).  For more information, see the [Wikipedia](https://en.wikipedia.org/wiki/Automatic_Packet_Reporting_System) article.
 
 ### Requirements
-- **aprs** - **weewx** extension which generates the data field of an APRS packet from archive reports.  This can be downloaded [here](https://github.com/cavedon/weewx-aprs) and installed using the **weectl extension** subcommand.
+- **aprs** - weewx extension which generates the data field of an APRS packet from archive reports.  This can be downloaded [here](https://github.com/cavedon/weewx-aprs) and installed using the **weectl extension** subcommand.
 - **pyham_pe** - AGWPE packet engine client Python package. This can be installed using **pip**.
 
 ### Configuration
